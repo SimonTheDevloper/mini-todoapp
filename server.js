@@ -44,7 +44,17 @@ app.post('/todos', async (req, res) => {
         res.status(500).json({ error: err.message })
     }
 });
+app.delete('/todos/:id', async (req, res) => {
+    const id = req.params.id;
 
+    try {
+        const delteTodo = await Task.findByIdAndDelete(id);
+        res.status(200).json({ msg: "erfolgreich gelöscht", delteTodo });
+    }
+    catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 app.listen(3000, () => {
     console.log("Server läuft auf Port 3000");
 });
