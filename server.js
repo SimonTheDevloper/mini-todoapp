@@ -20,6 +20,7 @@ connectDB();
 
 const Task = require('./models/task');
 const { error } = require('console');
+const { constants } = require('vm');
 app.get('/todos', async (req, res) => {
     try {
         const allTodos = await Task.find(); // alle User
@@ -50,12 +51,28 @@ app.delete('/todos/:id', async (req, res) => {
 
     try {
         const delteTodo = await Task.findByIdAndDelete(id);
-        if (!delteTodo) { // wenn id nicht in den Todos gibt
+        if (!delteTodo) { // wenn id nicht in den Todos gibt bzw wenn todo null ist
             return res.status(404).json({ error: "Todo nicht gefunden" });
         }
         res.status(200).json({ msg: "erfolgreich gelöscht", delteTodo });
+    }
+    catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
-
+app.put('/todos/:id', async (req, res) => {
+    const id = req.params.id;
+    const { text } = req.body;
+    if (!text || text.trim() === '') {
+        return res.status(400).json({ error: 'Das Feld text darf nicht leer sein' });
+    }
+    try {
+        const updatedTodo = await Task.findByIdAndUpdate(id, { text: text.trim() }, { new: true }); // new true damit die aktualisierte version zurückgegeben wird;
+        if (!updatedTodo) {
+            return res.status(404).json({ error: "Todo nicht gefunden" });
+        }
+        res.status(200).json({ msg: "Todo erfolgreich aktualisiert", updatedTodo });
     }
     catch (err) {
         res.status(500).json({ error: err.message });
