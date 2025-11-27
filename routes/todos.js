@@ -10,8 +10,22 @@ router.get('/', async (req, res) => {
     catch (err) {
         res.status(500).json({ error: err.message });
     }
-})
-router.get('/:id' async(req, res))
+});
+
+router.get('/:id', async (req, res) => { // ein todo per id finden
+    const id = req.params.id;
+    try {
+        const serchedTodo = await Task.findById(id);
+        if (!serchedTodo) { // wenn id nicht in den Todos gibt bzw wenn todo null ist
+            return res.status(404).json({ error: "Todo nicht gefunden" });
+        }
+        res.status(200).json({ msg: "erfolgreich gefunden", serchedTodo });
+    }
+    catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 router.post('/', async (req, res) => {
     const { text } = req.body;
 
@@ -59,4 +73,22 @@ router.put('/:id', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+router.patch('/:id', async (req, res) => {
+    const id = req.params.id;
+    const updates = req.body;
+    //    return res.status(400).json({ error: 'Das Feld text darf nicht leer sein' });
+    //}
+    try {
+        const updatedTodo = await Task.findByIdAndUpdate(id, updates, { new: true }); // new true damit die aktualisierte version zurückgegeben wird;
+        if (!updatedTodo) {
+            return res.status(404).json({ error: "Todo nicht gefunden" });
+        }
+        res.status(200).json({ msg: "Todo erfolgreich aktualisiert", updatedTodo });
+    }
+    catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 module.exports = router;
