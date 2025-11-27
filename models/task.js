@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const taskSchema = new Schema({
-    text: { type: String, required: true } // ist davür da das es ein String sein muss und ein text haben muss sonst kann auch in die Db etwas reingeschickt werden was keinen "text" hat
-
+    text: { type: String, required: true }, // ist davür da das es ein String sein muss und ein text haben muss sonst kann auch in die Db etwas reingeschickt werden was keinen "text" hat
+    date: { type: Date, default: Date.now },
 });
 
 const Task = mongoose.model('Todo', taskSchema);

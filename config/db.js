@@ -14,4 +14,4 @@ async function connectDB() {
 }
 
 //Funktion, damit wir sie in server.js nutzen können
-module.exports = connectDB;
+module.exports = connectDB; 

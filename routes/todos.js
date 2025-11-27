@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 })
-
+router.get('/:id' async(req, res))
 router.post('/', async (req, res) => {
     const { text } = req.body;
 
