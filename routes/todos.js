@@ -27,14 +27,18 @@ router.get('/:id', async (req, res) => { // ein todo per id finden
 });
 
 router.post('/', async (req, res) => {
-    const { text } = req.body;
+    const { text, tags, priority } = req.body;
 
     // Prüfen ob text da ist und nicht nur Leerzeichen ist
     if (!text || text.trim() === '') {
         return res.status(400).json({ error: 'Das Feld text darf nicht leer sein' });
     }
     try {
-        const NewTodo = await Task.create({ text: text.trim() })
+        const NewTodo = await Task.create({
+            text: text.trim(),
+            tags: tags || [],  // Falls nicht angegeben: leeres Array
+            priority: priority || 'Low'  // Falls nicht angegeben: Standard
+        })
         res.status(201).json({ msg: "Neue Todo erstellt", NewTodo })
     }
     catch (err) {
