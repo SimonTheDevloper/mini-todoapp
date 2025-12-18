@@ -4,7 +4,9 @@ const Task = require('../models/task');
 const taskController = require('../controllers/taskController'); // Controllers importieren
 
 router.get('/', taskController.getAllTasks);
+router.get('/search', taskController.getTaskBySearch);
 router.get('/:id', taskController.getTasksById);
+
 
 router.post('/', taskController.createTask);
 

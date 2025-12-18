@@ -23,7 +23,22 @@ exports.getTasksById = async (req, res) => { // ein todo per id finden
         res.status(500).json({ error: err.message });
     }
 };
+exports.getTaskBySearch = async (req, res) => {
+    try {
+        let filter = {};
+        if (req.query.priority) { // noch prioity suchen. zB.: "High"
+            filter.priority = req.query.priority
+        }
+        if (req.query.priority) {
+            filter.tags = req.query
+        }
+        const results = await Task.find(filter);
+        res.json(results);
+    } catch (err) {
+        res.status(500).json({ msg: err.message });
 
+    }
+};
 exports.createTask = async (req, res) => {
     const { text, tags, priority } = req.body;
 
