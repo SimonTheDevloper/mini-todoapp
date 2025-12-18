@@ -26,12 +26,16 @@ exports.getTasksById = async (req, res) => { // ein todo per id finden
 exports.getTaskBySearch = async (req, res) => {
     try {
         let filter = {};
+        let tagsArray;
         if (req.query.priority) { // noch prioity suchen. zB.: "High"
             filter.priority = req.query.priority;
         }
         if (req.query.tags) { // sucht nach tags
-            filter.tags = req.query.tags;
+
+            tagsArray = req.query.tags.split(',');
         }
+        filter.tags = { $in: tagsArray };
+
         if (req.query.completed) {
             filter.completed = req.query.completed;
         }
