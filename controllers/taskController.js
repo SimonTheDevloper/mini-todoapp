@@ -27,12 +27,15 @@ exports.getTaskBySearch = async (req, res) => {
     try {
         let filter = {};
         if (req.query.priority) { // noch prioity suchen. zB.: "High"
-            filter.priority = req.query.priority
+            filter.priority = req.query.priority;
         }
-        if (req.query.priority) {
-            filter.tags = req.query
+        if (req.query.tags) { // sucht nach tags
+            filter.tags = req.query.tags;
         }
-        const results = await Task.find(filter);
+        if (req.query.completed) {
+            filter.completed = req.query.completed;
+        }
+        const results = await Task.find(filter).sort({ date: -1 });;
         res.json(results);
     } catch (err) {
         res.status(500).json({ msg: err.message });
