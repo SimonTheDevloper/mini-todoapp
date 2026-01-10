@@ -9,12 +9,12 @@ const userSchema = new Schema({
 });
 
 //das kommt immer dazwischen wenn ein neuer user gesaved wird
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function () {
     console.log("Vorher:", this.password);
     this.password = await bcrypt.hash(this.password, 10); // hashen
 
     console.log("Nachher:", this.password);
-    next();
+
 });
 const USER = mongoose.model('User', userSchema);
 module.exports = USER;
