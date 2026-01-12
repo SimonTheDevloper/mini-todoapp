@@ -1,5 +1,6 @@
 const USER = require('../models/user');
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 exports.createUser = async (req, res) => {
     const { username, email, password } = req.body;
     try {
@@ -24,10 +25,16 @@ exports.authenticateUser = async (req, res) => {
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
-        if (!passwordMatch) {
+        if (passwordMatch) {
+            const token = jwt.sign(
+                { id: user._id },          // 1. DER INHALT (Payload)
+                process.env.JWT_SECRET,    // 2. DAS SIEGEL (Secret Key)
+                { expiresIn: '24h' }       // 3. DAS HALTBARKEITSDATUM (Options)
+            );
+            res.status(200).json({ token });
+        } else {
             return res.status(401).send("Not Allowed");
         }
-        return res.status(200).send("Success");
 
     } catch (err) {
         return res.status(500).json({ error: err.message });
