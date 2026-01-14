@@ -69,7 +69,7 @@ exports.createTask = async (req, res) => {
     }
 };
 
-exports.delteTask = async (req, res) => {
+exports.deleteTask = async (req, res) => {
     const id = req.params.id;
     try {
         const task = await Task.findById(id);

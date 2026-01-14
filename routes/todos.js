@@ -11,7 +11,7 @@ router.get('/:id', taskController.getTasksById);
 
 router.post('/', authMiddleware, taskController.createTask);
 
-router.delete('/:id', authMiddleware, taskController.delteTask);
+router.delete('/:id', authMiddleware, taskController.deleteTask);
 
 router.put('/:id', authMiddleware, taskController.updateTask);
 
