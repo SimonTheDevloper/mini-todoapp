@@ -1,0 +1,9 @@
+# @name login
+// damit sagt das der Rest
+POST http://localhost:3000/user/login
+Content-Type: application/json
+
+{
+    "email": "Simon.maier@gmail.com",
+    "password": "Simon"
+}

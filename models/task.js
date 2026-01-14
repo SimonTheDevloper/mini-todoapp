@@ -15,6 +15,11 @@ const taskSchema = new Schema({
         default: 'Low'
     },
     date: { type: Date, default: Date.now },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,  // Spezieller Typ!
+        ref: 'User',  // Referenz zur User-Collection
+        required: true
+    }
 });
 
 const Task = mongoose.model('Todo', taskSchema);
