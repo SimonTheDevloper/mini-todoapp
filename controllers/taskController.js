@@ -14,11 +14,14 @@ exports.getTasks = async (req, res) => {
 exports.getTasksById = async (req, res) => { // ein todo per id finden
     const id = req.params.id;
     try {
-        const serchedTodo = await Task.findById(id);
-        if (!serchedTodo) { // wenn id nicht in den Todos gibt bzw wenn todo null ist
-            return res.status(404).json({ error: "Todo nicht gefunden" });
+        const searchedTodo = await Task.findById(id);
+        if (!searchedTodo) {
+            return res.status(404).json({ error: "Task nicht gefunden" });
         }
-        res.status(200).json({ msg: "erfolgreich gefunden", serchedTodo });
+        if (searchedTodo.userId.toString() !== req.userId) {
+            return res.status(403).json({ error: "Du darfst auf diesen Task nicht zugreifen" });
+        }
+        res.status(200).json({ msg: "gefunden", searchedTodo });
     }
     catch (err) {
         res.status(500).json({ error: err.message });
@@ -26,7 +29,7 @@ exports.getTasksById = async (req, res) => { // ein todo per id finden
 };
 exports.getTaskBySearch = async (req, res) => {
     try {
-        let filter = {};
+        let filter = { userId: req.userId };
         let tagsArray;
         if (req.query.priority) { // noch prioity suchen. zB.: "High"
             filter.priority = req.query.priority;
