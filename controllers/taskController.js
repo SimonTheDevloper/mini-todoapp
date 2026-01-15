@@ -82,8 +82,8 @@ exports.deleteTask = async (req, res) => {
         if (task.userId.toString() !== req.userId) { //in der Datenbank kein einfacher String ist, sondern ein BSON-Objekt ====> DESHALB toSring
             return res.status(403).json({ error: "Du darfst diesen Task nicht löschen" });
         }
-        const deltedTodo = await Task.findByIdAndDelete(id);
-        res.status(200).json({ msg: "erfolgreich gelöscht", deltedTodo });
+        const deleted = await Task.findByIdAndDelete(id);
+        res.status(200).json({ msg: "erfolgreich gelöscht", deleted });
     }
     catch (err) {
         res.status(500).json({ error: err.message });
@@ -105,9 +105,6 @@ exports.updateTask = async (req, res) => {
             return res.status(403).json({ error: "Du darfst diesen Task nicht löschen" });
         }
         const updatedTodo = await Task.findByIdAndUpdate(id, { text: text.trim() }, { new: true }); // new true damit die aktualisierte version zurückgegeben wird;
-        if (!updatedTodo) {
-            return res.status(404).json({ error: "Todo nicht gefunden" });
-        }
         res.status(200).json({ msg: "Todo erfolgreich aktualisiert", updatedTodo });
     }
     catch (err) {
@@ -129,9 +126,6 @@ exports.patchTask = async (req, res) => {
             return res.status(403).json({ error: "Du darfst diesen Task nicht löschen" });
         }
         const updatedTodo = await Task.findByIdAndUpdate(id, updates, { new: true }); // new true damit die aktualisierte version zurückgegeben wird;
-        if (!updatedTodo) {
-            return res.status(404).json({ error: "Todo nicht gefunden" });
-        }
         res.status(200).json({ msg: "Todo erfolgreich aktualisiert", updatedTodo });
     }
     catch (err) {
