@@ -9,8 +9,8 @@ app.use(express.json());
 
 
 router.get('/', authMiddleware, taskController.getTasks);
-router.get('/search', taskController.getTaskBySearch);
-router.get('/:id', taskController.getTasksById);
+router.get('/search', authMiddleware, taskController.getTaskBySearch);
+router.get('/:id', authMiddleware, taskController.getTasksById);
 
 
 router.post('/', authMiddleware, taskController.createTask);
@@ -19,6 +19,6 @@ router.delete('/:id', authMiddleware, taskController.deleteTask);
 
 router.put('/:id', authMiddleware, taskController.updateTask);
 
-router.patch('/:id', taskController.patchTask);
+router.patch('/:id', authMiddleware, taskController.patchTask);
 
 module.exports = router;
