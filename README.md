@@ -16,6 +16,8 @@
 - Fehler-Handling mit costum messages
 
 ### Rate Limiting:
-Wenn von einer IP innerhalb kurzer Zeit zu viele Anfragen kommen, wird der Zugriff vorübergehend blockiert.
+
+> Wenn von einer IP innerhalb kurzer Zeit zu viele Anfragen kommen, wird der Zugriff vorübergehend blockiert.
+
 - Schutz vor Brute-Force
 - Unterschiedliche Limits für verschiedene Routes wie für Auth Routen oder generelle routen.

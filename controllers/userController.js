@@ -2,7 +2,8 @@ const USER = require('../models/user');
 const RefreshToken = require('../models/refreshToken')
 const bcrypt = require('bcrypt');
 const crypto = require('crypto')
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+
 exports.createUser = async (req, res) => {
     const { username, email, password } = req.body;
     try {
@@ -50,3 +51,22 @@ exports.authenticateUser = async (req, res) => {
     }
 };
 
+exports.refreshAccessToken = async (req, res) => {
+    const { refreshToken } = req.body;
+
+    const tokenDoc = await RefreshToken.findOne({ token: refreshToken });
+
+    if (!tokenDoc) {
+        return res.status(404).json({ error: "Token nicht gefunden" });
+    }
+
+    if (tokenDoc.expiresAt <= Date.now()) {
+        return res.status(401).json({ error: "Token abgelaufen" });
+    }
+    const newAccessToken = jwt.sign(
+        { id: tokenDoc.userId },          // 1. DER INHALT (Payload)
+        process.env.JWT_SECRET,    // 2. DAS SIEGEL (Secret Key)
+        { expiresIn: '15m' }       // 3. DAS HALTBARKEITSDATUM (Options)
+    );
+    res.status(200).send(newAccessToken)
+}; 
