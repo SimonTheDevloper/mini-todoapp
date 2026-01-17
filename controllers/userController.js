@@ -64,9 +64,18 @@ exports.refreshAccessToken = async (req, res) => {
         return res.status(401).json({ error: "Token abgelaufen" });
     }
     const newAccessToken = jwt.sign(
-        { id: tokenDoc.userId },          // 1. DER INHALT (Payload)
-        process.env.JWT_SECRET,    // 2. DAS SIEGEL (Secret Key)
-        { expiresIn: '15m' }       // 3. DAS HALTBARKEITSDATUM (Options)
+        { id: tokenDoc.userId },
+        process.env.JWT_SECRET,
+        { expiresIn: '15m' }
     );
-    res.status(200).send(newAccessToken)
-}; 
+    await RefreshToken.findByIdAndDelete(tokenDoc._id);
+    const newRefreshToken = crypto.randomBytes(32).toString('hex');
+
+    await RefreshToken.create({
+        userId: tokenDoc.userId,
+        token: newRefreshToken,
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+    });
+    res.status(200).json({ newAccessToken, newRefreshToken });
+
+};
