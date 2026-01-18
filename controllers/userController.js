@@ -32,7 +32,7 @@ exports.authenticateUser = async (req, res) => {
             const accessToken = jwt.sign(
                 { id: user._id },          // 1. DER INHALT (Payload)
                 process.env.JWT_SECRET,    // 2. DAS SIEGEL (Secret Key)
-                { expiresIn: '1m' }       // 3. DAS HALTBARKEITSDATUM (Options)
+                { expiresIn: '15m' }       // 3. DAS HALTBARKEITSDATUM (Options)
             );
             const refreshToken = crypto.randomBytes(32).toString('hex');
 

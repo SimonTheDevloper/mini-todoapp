@@ -36,12 +36,11 @@ exports.getTaskBySearch = async (req, res) => {
         }
         if (req.query.tags) { // sucht nach tags
 
-            tagsArray = req.query.tags.split(',');
+            filter.tags = { $in: req.query.tags.split(',') }; // in heißt es muss min eines von diesen tags haben
         }
-        filter.tags = { $in: tagsArray };
 
-        if (req.query.completed) {
-            filter.completed = req.query.completed;
+        if (req.query.completed !== undefined) {
+            filter.completed = req.query.completed === 'true';
         }
         const results = await Task.find(filter).sort({ date: -1 });;
         res.json(results);
