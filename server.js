@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 require('dotenv');
 const todoRoutes = require('./routes/todos');
@@ -7,7 +8,7 @@ const connectDB = require('./config/db')
 const { errorHandler } = require('./middleware/errorHandler'); // middleware/errorHandler.js exportiert ein Objekt { errorHandler } darum in {}
 const { generalLimiter } = require('./middleware/rateLimiter');
 
-
+app.use(cors());
 app.set('trust proxy', 1); // damit proxy auch funktoniert für Render 
 app.use(express.json()); // damit req.body funktioniert
 connectDB();
