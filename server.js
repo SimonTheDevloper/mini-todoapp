@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser')
 const app = express();
 require('dotenv');
 const todoRoutes = require('./routes/todos');
@@ -11,6 +12,7 @@ const { generalLimiter } = require('./middleware/rateLimiter');
 app.use(cors());
 app.set('trust proxy', 1); // damit proxy auch funktoniert für Render 
 app.use(express.json()); // damit req.body funktioniert
+app.use(cookieParser())
 connectDB();
 
 app.use(generalLimiter);

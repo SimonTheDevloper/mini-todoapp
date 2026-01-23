@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken');
 
-const generateTokens = async (userId) => {
+const generateTokens = async (userId, res) => {
     const accessToken = jwt.sign(
         { id: userId },          // 1. DER INHALT (Payload)
         process.env.JWT_SECRET,    // 2. DAS SIEGEL (Secret Key)
@@ -17,7 +17,18 @@ const generateTokens = async (userId) => {
         token: refreshToken,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)  // 30 Tage ab jetztiges datum
     });
-    return { accessToken, refreshToken }
+    res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',  //Nur HTTPS in Production für Render
+        sameSite: 'strict',
+        maxAge: 15 * 60 * 1000  //15 Minuten 
+    });
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 30 * 24 * 60 * 60 * 1000  // 30 Tage
+    });
 }
 exports.createUser = async (req, res) => {
     const { username, email, password } = req.body;
@@ -27,8 +38,10 @@ exports.createUser = async (req, res) => {
             email: email.trim(),
             password: password
         })
-        const tokens = await generateTokens(newUser._id)
-        res.status(201).json(tokens)
+        await generateTokens(newUser._id, res);
+        res.status(201).json({
+            message: "User erfolgreich erstellt"
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -45,19 +58,20 @@ exports.authenticateUser = async (req, res) => {
 
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (passwordMatch) {
-            const tokens = await generateTokens(user._id)
-            res.status(200).json(tokens);
+            await generateTokens(user._id, res);
+            res.status(200).json({
+                message: "Login erfolgreich"
+            });
         } else {
             return res.status(401).send("Not Allowed");
         }
-
     } catch (err) {
         return res.status(500).json({ error: err.message });
     }
 };
 
 exports.refreshAccessToken = async (req, res) => {
-    const { refreshToken } = req.body;
+    const { refreshToken } = req.cookies.refreshToken;
 
     const tokenDoc = await RefreshToken.findOne({ token: refreshToken });
 
@@ -81,6 +95,20 @@ exports.refreshAccessToken = async (req, res) => {
         token: newRefreshToken,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
     });
-    res.status(200).json({ newAccessToken, newRefreshToken });
+    res.cookie('accessToken', newAccessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 15 * 60 * 1000
+    });
+
+    res.cookie('refreshToken', newRefreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 30 * 24 * 60 * 60 * 1000
+    });
+
+    res.status(200).json({ message: "Token erfolgreich erneuert" });
 
 };
