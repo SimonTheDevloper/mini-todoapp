@@ -53,7 +53,7 @@ exports.authenticateUser = async (req, res) => {
     try {
         const user = await USER.findOne({ email });
         if (!user) {
-            return res.status(404).send("Kein User mit dieser E-Mail gefunden");
+            return res.status(404).json({ error: "Kein User mit dieser E-Mail gefunden" });
         }
 
         const passwordMatch = await bcrypt.compare(password, user.password);
@@ -63,7 +63,7 @@ exports.authenticateUser = async (req, res) => {
                 message: "Login erfolgreich"
             });
         } else {
-            return res.status(401).send("Not Allowed");
+            return res.status(401).json({ error: "Falsches Passwort" });
         }
     } catch (err) {
         return res.status(500).json({ error: err.message });
@@ -71,7 +71,7 @@ exports.authenticateUser = async (req, res) => {
 };
 
 exports.refreshAccessToken = async (req, res) => {
-    const { refreshToken } = req.cookies.refreshToken;
+    const refreshToken = req.cookies.refreshToken;
 
     const tokenDoc = await RefreshToken.findOne({ token: refreshToken });
 
