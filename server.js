@@ -10,9 +10,13 @@ const { errorHandler } = require('./middleware/errorHandler'); // middleware/err
 const { generalLimiter } = require('./middleware/rateLimiter');
 
 app.use(cors({
+    origin: true, // Erlaubt jede Origin, die anfragt
+    credentials: true
+}))
+/*app.use(cors({
     origin: ['http://127.0.0.1:5500', 'http://localhost:5500'],
     credentials: true
-}));
+})); */
 app.set('trust proxy', 1); // damit proxy auch funktoniert für Render 
 app.use(express.json()); // damit req.body funktioniert
 app.use(cookieParser())

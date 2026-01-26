@@ -20,13 +20,15 @@ const generateTokens = async (userId, res) => {
     res.cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',  //Nur HTTPS in Production für Render
-        sameSite: 'strict',
+        sameSite: 'lax',
+        path: '/',
         maxAge: 15 * 60 * 1000  //15 Minuten 
     });
     res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'lax',
+        path: '/',
         maxAge: 30 * 24 * 60 * 60 * 1000  // 30 Tage
     });
 }
@@ -98,14 +100,14 @@ exports.refreshAccessToken = async (req, res) => {
     res.cookie('accessToken', newAccessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'lax',
         maxAge: 15 * 60 * 1000
     });
 
     res.cookie('refreshToken', newRefreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        sameSite: 'lax',
         maxAge: 30 * 24 * 60 * 60 * 1000
     });
 
