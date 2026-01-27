@@ -3,7 +3,7 @@ const Task = require('../models/task');
 exports.getTasks = async (req, res) => {
     const userId = req.userId;
     try {
-        const allTodos = await Task.find({ userId }); // alle Todos zu einem User finden
+        const allTodos = await Task.find({ userId }).sort({ date: -1 }); // mit sort und data -1 macht das man die todos in der neusten reijenfolge bekommt
         res.status(200).json(allTodos);
     }
     catch (err) {
